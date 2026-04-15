@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zeplin X - Rezervasyon Sistemi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:#121a2e;
+      --card2:#0f1729;
+      --text:#eaf1ff;
+      --muted:#9fb1d3;
+      --border:rgba(148,163,184,.16);
+      --primary:#6d7cff;
+      --primary2:#4f5df2;
+      --success:#17c964;
+      --warning:#ffb020;
+      --danger:#ff5d73;
+      --radius:22px;
+      --shadow:0 10px 30px rgba(0,0,0,.25);
+      --shadow2:0 20px 45px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family:'Outfit',sans-serif;
+      color:var(--text);
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(109,124,255,.20), transparent 28%),
+        radial-gradient(circle at top right, rgba(23,201,100,.12), transparent 24%),
+        linear-gradient(180deg,#060912 0%, #0b1020 100%);
+    }
+    button{font-family:inherit}
+    .grid-bg{
+      position:fixed;inset:0;pointer-events:none;opacity:.22;
+      background-image:
+        linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size:36px 36px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
+    }
+    .wrap{max-width:1280px;margin:0 auto;padding:18px;position:relative;z-index:1}
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      backdrop-filter:blur(14px);
+      background:rgba(18,26,46,.76);
+      border:1px solid rgba(148,163,184,.14);
+      border-radius:24px;padding:14px 16px;
+      display:flex;justify-content:space-between;align-items:center;gap:12px;
+      box-shadow:var(--shadow);
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:48px;height:48px;border-radius:14px;
+      background:linear-gradient(135deg,var(--primary),var(--primary2));
+      display:grid;place-items:center;font-size:24px;color:#fff;
+      box-shadow:0 10px 25px rgba(109,124,255,.28), 0 0 0 1px rgba(255,255,255,.08) inset;
+    }
+    .brand h1{margin:0;font-size:20px;line-height:1.1}
+    .brand p{margin:2px 0 0;color:var(--muted);font-size:13px}
+    .clock{
+      background:#060912;color:#fff;border-radius:18px;padding:12px 16px;
+      font-size:18px;font-weight:800;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      min-width:132px;text-align:center;border:1px solid rgba(255,255,255,.08);
+    }
+
+    .hero{
+      margin-top:16px;
+      background:linear-gradient(135deg, rgba(109,124,255,.18), rgba(18,26,46,.92));
+      border:1px solid rgba(148,163,184,.14);
+      border-radius:28px;padding:20px;box-shadow:var(--shadow2);
+      display:grid;grid-template-columns:1.4fr .9fr;gap:16px;align-items:stretch;
+      position:relative;overflow:hidden;
+    }
+    .hero::after{
+      content:"";position:absolute;inset:auto -8% -60% auto;width:340px;height:340px;border-radius:50%;
+      background:radial-gradient(circle, rgba(109,124,255,.22), transparent 70%);
+      filter:blur(8px);
+    }
+    .hero h2{margin:0 0 6px;font-size:15px;letter-spacing:2px;text-transform:uppercase;opacity:.84}
+    .hero-time{font-size:clamp(44px,7vw,74px);font-weight:900;line-height:1;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+    .hero-sub{margin-top:10px;font-size:15px;opacity:.92}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .stat{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:20px;padding:16px;text-align:center;
+    }
+    .stat .v{font-size:28px;font-weight:900;line-height:1}
+    .stat .l{margin-top:8px;font-size:12px;opacity:.85;text-transform:uppercase;letter-spacing:1px}
+
+    .notice{
+      margin-top:14px;
+      background:linear-gradient(135deg, rgba(255,176,32,.18), rgba(18,26,46,.92));
+      border:1px solid rgba(255,176,32,.22);
+      border-radius:20px;padding:14px 16px;
+      display:flex;justify-content:space-between;gap:10px;align-items:center;
+      color:#ffe7b0;box-shadow:var(--shadow)
+    }
+    .notice strong{color:#fff}
+    .notice span{font-size:13px}
+
+    .toolbar{margin:18px 0 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+    .chiprow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .chip{
+      border:none;border-radius:999px;padding:12px 16px;
+      background:var(--card);color:var(--text);box-shadow:var(--shadow);
+      font-weight:800;cursor:pointer;transition:.2s;
+      display:flex;align-items:center;gap:8px
+    }
+    .chip:hover{transform:translateY(-1px)}
+    .chip.primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+    .chip.dark{background:#060912;color:#fff}
+    .chip.ghost{background:rgba(255,255,255,.04);border:1px solid var(--border);box-shadow:none}
+
+    .panel{display:grid;grid-template-columns:1.6fr .9fr;gap:16px;align-items:start}
+    .card{
+      background:linear-gradient(180deg, rgba(18,26,46,.98), rgba(12,17,31,.98));
+      border:1px solid var(--border);border-radius:var(--radius);
+      box-shadow:var(--shadow);overflow:hidden;position:relative;
+    }
+    .card::after{
+      content:"";position:absolute;inset:auto 0 0 0;height:4px;
+      background:linear-gradient(90deg,var(--primary),#22c55e,var(--warning));opacity:.72
+    }
+    .card-hd{padding:18px 18px 0}
+    .card-hd h3{margin:0;font-size:18px}
+    .card-hd p{margin:6px 0 0;color:var(--muted);font-size:13px}
+
+    .sessions{padding:16px 18px 18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .session{
+      border:1px solid rgba(148,163,184,.16);border-radius:22px;
+      background:linear-gradient(180deg,#11192d,#0f1729);padding:16px;position:relative;overflow:hidden;
+      animation:pop .24s ease;transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    @keyframes pop{from{opacity:.5;transform:translateY(8px) scale(.98)} to{opacity:1;transform:translateY(0) scale(1)}}
+    .session:hover{transform:translateY(-2px);box-shadow:0 14px 24px rgba(0,0,0,.24);border-color:rgba(109,124,255,.35)}
+    .session.upcoming::before{
+      content:"AÇIK";position:absolute;top:14px;right:-28px;background:var(--success);color:#fff;
+      font-size:11px;font-weight:900;letter-spacing:.8px;transform:rotate(36deg);padding:6px 34px;
+    }
+    .session.running{outline:3px solid rgba(23,201,100,.16);border-color:rgba(23,201,100,.45)}
+    .session.full{background:linear-gradient(180deg,#2a1220,#171021)}
+    .session.closed,.session.locked{opacity:.62;filter:saturate(.72)}
+    .s-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:12px}
+    .stime{
+      font-size:34px;font-weight:900;line-height:1;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      color:#fff;text-shadow:0 0 18px rgba(109,124,255,.15)
+    }
+    .badge{
+      font-size:12px;font-weight:900;padding:8px 12px;border-radius:999px;
+      background:#24304e;color:#c7d2fe;white-space:nowrap;border:1px solid rgba(148,163,184,.16)
+    }
+    .badge.open{background:rgba(23,201,100,.14);color:#8df2b1;border-color:rgba(23,201,100,.18)}
+    .badge.full{background:rgba(255,93,115,.14);color:#ff9caf;border-color:rgba(255,93,115,.18)}
+    .badge.closed{background:rgba(148,163,184,.14);color:#cbd5e1;border-color:rgba(148,163,184,.18)}
+    .badge.running{background:rgba(109,124,255,.16);color:#c7d2fe;border-color:rgba(109,124,255,.22)}
+    .badge.locked{background:rgba(148,163,184,.08);color:#aab7d0;border-color:rgba(148,163,184,.12)}
+    .film{
+      font-size:22px;font-weight:900;margin:4px 0 12px;min-height:56px;line-height:1.12;
+      padding:12px 14px;border-radius:16px;
+      background:linear-gradient(135deg,#eef2ff,#ffffff);
+      border:1px solid #c7d2fe;color:#312e81;
+      box-shadow:0 10px 24px rgba(99,102,241,.10);
+      text-shadow:0 1px 0 rgba(255,255,255,.8)
+    }
+    .session.running .film{background:linear-gradient(135deg,#ecfeff,#ffffff);border-color:#99f6e4;color:#0f766e}
+    .session.full .film{background:linear-gradient(135deg,#fff1f2,#ffffff);border-color:#fecaca;color:#9f1239}
+    .session.closed .film,.session.locked .film{background:#0f1729;color:#94a3b8}
+    .meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+    .seats{font-size:14px;color:var(--muted);font-weight:700}
+    .bar{height:10px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;flex:1;border:1px solid rgba(148,163,184,.08)}
+    .fill{height:100%;width:0;background:linear-gradient(90deg,var(--success),#34d399);border-radius:999px;transition:width .25s}
+    .fill.warn{background:linear-gradient(90deg,var(--warning),#fbbf24)}
+    .fill.full{background:linear-gradient(90deg,var(--danger),#fb7185)}
+    .btns{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .btn{
+      border:none;border-radius:14px;padding:12px 10px;font-size:14px;font-weight:900;
+      cursor:pointer;transition:.2s;background:#fff;color:#0f172a;border:1px solid var(--border)
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.add{background:rgba(23,201,100,.95);color:#fff;border-color:transparent}
+    .btn.add2{background:rgba(23,201,100,.84);color:#fff;border-color:transparent}
+    .btn.add3{background:rgba(23,201,100,.72);color:#fff;border-color:transparent}
+    .btn.min{background:rgba(255,255,255,.08);color:#dbe6ff}
+    .btn.film{background:rgba(109,124,255,.16);color:#d5dcff;border-color:rgba(109,124,255,.22)}
+    .btn:disabled{opacity:.42;cursor:not-allowed;transform:none}
+    .mini{display:flex;justify-content:space-between;gap:10px;margin-top:12px;flex-wrap:wrap}
+    .small{font-size:12px;color:var(--muted)}
+
+    .side{display:grid;gap:16px}
+    .box{padding:18px}
+    .filmgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+    .filmopt{
+      border:none;border-radius:18px;background:linear-gradient(180deg,#fff,#f8fafc);padding:18px 14px;text-align:left;
+      box-shadow:var(--shadow);cursor:pointer;font-weight:900;border:1px solid var(--border);
+      transition:.2s;min-height:92px;font-size:15px;line-height:1.15;color:#0f172a;display:flex;align-items:flex-end
+    }
+    .filmopt:hover{transform:translateY(-1px);border-color:#c7d2fe;box-shadow:0 12px 28px rgba(99,102,241,.12)}
+    .filmopt.active{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;border-color:transparent;box-shadow:0 14px 30px rgba(99,102,241,.26)}
+    .legend{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+    .leg{border-radius:16px;padding:14px;background:#0f1729;border:1px solid var(--border);font-size:13px;color:#cbd5e1}
+    .history{margin-top:6px;display:grid;gap:10px}
+    .log{
+      border:1px solid var(--border);border-radius:16px;padding:12px 14px;background:#0f1729;
+      display:flex;justify-content:space-between;gap:10px;align-items:center;animation:slideIn .22s ease
+    }
+    @keyframes slideIn{from{opacity:0;transform:translateX(-6px)} to{opacity:1;transform:translateX(0)}}
+    .log strong{font-size:14px}.log span{font-size:12px;color:var(--muted)}
+
+    .customer-screen{margin-top:16px}
+    .customer-summary{
+      background:linear-gradient(135deg, rgba(109,124,255,.16), rgba(18,26,46,.96));
+      border:1px solid rgba(148,163,184,.14);
+      border-radius:18px;padding:14px;
+    }
+    .customer-summary .v{font-size:28px;font-weight:900;line-height:1}
+    .customer-summary .l{margin-top:6px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+    .customer-card{
+      background:linear-gradient(180deg,#0f1729,#11192d);
+      border:1px solid rgba(148,163,184,.16);
+      border-radius:20px;padding:14px;box-shadow:var(--shadow);transition:.2s
+    }
+    .customer-card:hover{transform:translateY(-2px);box-shadow:0 14px 24px rgba(0,0,0,.24)}
+    .customer-card .title{font-size:18px;font-weight:900;color:#fff;margin:0 0 8px}
+    .customer-card .meta{margin:0 0 10px;color:var(--muted)}
+    .customer-card .line{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;
+      border-radius:999px;padding:8px 10px;font-size:12px;font-weight:900;
+      background:rgba(109,124,255,.16);color:#d5dcff;border:1px solid rgba(109,124,255,.22)
+    }
+    .pill.green{background:rgba(23,201,100,.14);color:#8df2b1;border-color:rgba(23,201,100,.18)}
+    .pill.red{background:rgba(255,93,115,.14);color:#ff9caf;border-color:rgba(255,93,115,.18)}
+
+    .modal{
+      position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+      background:rgba(3,7,18,.65);backdrop-filter:blur(6px);padding:16px;z-index:50
+    }
+    .modal.show{display:flex}
+    .modal-card{
+      width:min(560px,100%);background:linear-gradient(180deg,#121a2e,#0f1729);
+      border:1px solid rgba(148,163,184,.14);border-radius:26px;box-shadow:var(--shadow2);
+      overflow:hidden;animation:modalIn .22s ease
+    }
+    @keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px)} to{opacity:1;transform:scale(1) translateY(0)}}
+    .modal-hd{padding:18px 18px 0}
+    .modal-hd h3{margin:0;font-size:22px}.modal-hd p{margin:6px 0 0;color:var(--muted);font-size:14px}
+    .modal-body{padding:18px}
+    .pickrow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .pick{border:none;border-radius:16px;padding:14px 10px;font-weight:800;cursor:pointer;background:#fff;border:1px solid var(--border)}
+    .pick:hover{border-color:#c7d2fe}
+    .pick.primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;border-color:transparent}
+    .modal-ft{padding:16px 18px 18px;border-top:1px solid var(--border);display:flex;gap:10px}
+    .modal-ft .btn{flex:1;padding:14px}
+
+    .toast{
+      position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(30px);
+      background:rgba(6,9,18,.95);color:#fff;border:1px solid rgba(255,255,255,.08);
+      box-shadow:var(--shadow2);padding:12px 16px;border-radius:16px;opacity:0;pointer-events:none;transition:.25s;z-index:70
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    @media (max-width: 980px){
+      .hero,.panel{grid-template-columns:1fr}
+      .sessions{grid-template-columns:1fr}
+    }
+    @media (max-width: 720px){
+      .wrap{padding:12px}
+      .topbar{padding:12px;border-radius:20px}
+      .brand h1{font-size:18px}
+      .clock{font-size:15px;min-width:auto}
+      .hero{padding:16px;border-radius:24px}
+      .stats{grid-template-columns:1fr 1fr 1fr}
+      .chiprow{width:100%}
+      .chip{padding:11px 14px;flex:1;justify-content:center}
+      .sessions{padding:14px}
+      .btns{grid-template-columns:repeat(2,1fr)}
+      .filmgrid,.pickrow,.legend,.customer-screen [style]{grid-template-columns:repeat(2,1fr)}
+      .card-hd{padding:16px 16px 0}
+      .notice{flex-direction:column;align-items:flex-start}
+      .customer-screen #customerSummary{grid-template-columns:1fr !important}
+      .customer-screen #customerSessions{grid-template-columns:1fr !important}
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">🎢</div>
+        <div>
+          <h1>Zeplin X</h1>
+          <p>Rezervasyon ve seans yönetimi</p>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button class="chip ghost" id="btnSettings" style="padding:10px 14px;">⚙ Ayarlar</button>
+        <div class="clock" id="clock">--:--</div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <h2>Günlük Panel</h2>
+        <div class="hero-time" id="heroTime">--:--</div>
+        <div class="hero-sub" id="heroSub">Sadece önündeki 2 saatlik seanslar açıktır. Yazı yazmadan, sadece butonla çalışır. Demo Saat ile gece test yapılır.</div>
+        <div class="hero-sub" id="demoStatus" style="margin-top:8px; font-weight:800; color:#ffe7b0;">Gerçek saat aktif</div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="v" id="statOpen">0</div><div class="l">Açık</div></div>
+        <div class="stat"><div class="v" id="statFull">0</div><div class="l">Dolu</div></div>
+        <div class="stat"><div class="v" id="statTotal">0</div><div class="l">Toplam kişi</div></div>
+      </div>
+    </section>
+
+    <div class="notice">
+      <div><strong>Yeşil = açık</strong> <span>· Kırmızı = dolu · Gri = kilitli. Sadece açık saatleri kullan.</span></div>
+      <div><span>Başlangıç: 10:00 · Son seans: 21:40</span></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="chiprow">
+        <button class="chip primary" id="btnPrev">◀ Önceki 6</button>
+        <button class="chip primary" id="btnNext">Sonraki 6 ▶</button>
+        <button class="chip ghost" id="btnNow">Şu ana dön</button>
+      </div>
+      <div class="chiprow">
+        <button class="chip primary" id="btnCashierMode">Kasiyer</button>
+        <button class="chip ghost" id="btnCustomerMode">Müşteri Ekranı</button>
+      </div>
+      <div class="chiprow">
+        <button class="chip dark" id="btnHelp">Kullanım</button>
+        <button class="chip ghost" id="btnExport">Özet Kopyala</button>
+      </div>
+    </div>
+
+    <section class="customer-screen" id="customerScreen" style="display:none;">
+      <div class="card" style="padding:18px;">
+        <div class="card-hd" style="padding:0">
+          <h3>Müşteri Ekranı</h3>
+          <p>Adama direkt bunu göster: hangi seanslarda kaç kişi var, hangi filmler var, kaç kişi daha alınır net görünür. Demo Saat ile gece bile test edebilirsin.</p>
+        </div>
+        <div id="customerSummary" style="margin-top:14px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px;"></div>
+        <div id="customerSessions" style="margin-top:14px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px;"></div>
+      </div>
+    </section>
+
+    <main class="panel" id="cashierArea">
+      <section class="card">
+        <div class="card-hd">
+          <h3>Aktif Seanslar</h3>
+          <p>Önümüzdeki 2 saat içindeki seanslar açık; uzak saatler kilitli görünür.</p>
+        </div>
+        <div class="sessions" id="sessions"></div>
+      </section>
+
+      <aside class="side">
+        <section class="card box">
+          <div class="card-hd" style="padding:0">
+            <h3>Film Havuzu</h3>
+            <p>Seanslara büyük ve okunaklı film kartlarıyla ata.</p>
+          </div>
+          <div class="filmgrid" id="filmGrid"></div>
+        </section>
+
+        <section class="card box">
+          <div class="card-hd" style="padding:0">
+            <h3>Durum</h3>
+            <p>Bugünkü hızlı görünüm.</p>
+          </div>
+          <div class="legend">
+            <div class="leg"><strong>Açık</strong><br><span>Önümüzdeki 2 saat</span></div>
+            <div class="leg"><strong>Dolu</strong><br><span>7/7 olmuş</span></div>
+            <div class="leg"><strong>Kilitli</strong><br><span>Uzaktaki saatler</span></div>
+            <div class="leg"><strong>Güvenli</strong><br><span>Silme yok, sadece düzenle</span></div>
+          </div>
+        </section>
+
+        <section class="card box">
+          <div class="card-hd" style="padding:0">
+            <h3>Son Hareketler</h3>
+            <p>Yaptığın işlemler burada görünür.</p>
+          </div>
+          <div class="history" id="history"></div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <div class="modal" id="filmModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-hd">
+        <h3>Film Seç</h3>
+        <p id="modalHint">Seans için bir film ata.</p>
+      </div>
+      <div class="modal-body">
+        <div class="pickrow" id="pickrow"></div>
+      </div>
+      <div class="modal-ft">
+        <button class="btn min" id="closeModal">İptal</button>
+        <button class="btn film" id="clearFilm">Filmi Kaldır</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="helpModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-hd">
+        <h3>Nasıl Kullanılır?</h3>
+        <p>Bu ekran herkesin hızlı kullanımı için sade tutuldu.</p>
+      </div>
+      <div class="modal-body">
+        <div style="display:grid; gap:10px;">
+          <div class="leg" style="background:#11192d;"><strong>1. Kasiyer</strong><br><span>Seans seç, film ata, kişi ekle veya çıkar.</span></div>
+          <div class="leg" style="background:#11192d;"><strong>2. Müşteri Ekranı</strong><br><span>Müşteriye boş yerleri ve uygun seansları göster.</span></div>
+          <div class="leg" style="background:#11192d;"><strong>3. Kilitli saatler</strong><br><span>Şu an alınmayan seanslardır, yanlışlıkla işlem yapılmaz.</span></div>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button class="btn film" id="closeHelp">Tamam</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="demoModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-hd">
+        <h3>Demo Saat</h3>
+        <p>Gece bile test için siteyi istediğin saatmiş gibi göster.</p>
+      </div>
+      <div class="modal-body">
+        <div style="display:grid; gap:10px;">
+          <div class="pickrow" style="grid-template-columns:repeat(2,1fr);" id="demoPickrow"></div>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button class="btn min" id="closeDemo">İptal</button>
+        <button class="btn film" id="clearDemo">Gerçeğe Dön</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="settingsModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-hd">
+        <h3>Ayarlar</h3>
+        <p>Test saati ve temel kullanım seçenekleri burada.</p>
+      </div>
+      <div class="modal-body">
+        <div style="display:grid; gap:10px;">
+          <div class="leg" style="background:#11192d;">
+            <strong>Aktif Saat</strong><br>
+            <span id="settingsCurrentTime">--:--</span>
+          </div>
+          <div class="leg" style="background:#11192d;">
+            <strong>Test Modu</strong><br>
+            <span>Gece bile seansları görmek için demo saat seç.</span>
+          </div>
+          <div class="pickrow" style="grid-template-columns:repeat(2,1fr);" id="settingsDemoPickrow"></div>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button class="btn min" id="closeSettings">Kapat</button>
+        <button class="btn film" id="realTimeBtn">Gerçek Saat</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const FILMS = [
+      "Beautiful China",
+      "Welcome to Asia",
+      "Fly Over America",
+      "Fly Over the Animal Kingdom",
+      "Fly Over the Haunted House",
+      "Flying Over the Jurassic Period",
+      "Fly Over the World"
+    ];
+
+    const OPEN_MINUTES = 10 * 60;
+    const LAST_START_MINUTES = 21 * 60 + 40;
+    const SLOT_MINUTES = 10;
+    const CAPACITY = 7;
+    const WINDOW_MINUTES = 120;
+    const WINDOW_SIZE = 6;
+
+    const STORAGE_KEY = "zeplin_x_state_customer_v1";
+    const BACKUP_KEY = "zeplin_x_state_customer_backup_v1";
+    const HISTORY_KEY = "zeplin_x_state_customer_history_v1";
+
+    const el = (id) => document.getElementById(id);
+    const pad2 = (n) => String(n).padStart(2, "0");
+    const nowTime = () => {
+      if (demoTimeMin !== null) return fromMinutes(demoTimeMin);
+      const d = new Date();
+      return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    };
+    const currentMinutes = () => {
+      if (demoTimeMin !== null) return demoTimeMin;
+      const d = new Date();
+      return d.getHours() * 60 + d.getMinutes();
+    };
+    const minutesOfDay = (d) => d.getHours() * 60 + d.getMinutes();
+    const fromMinutes = (m) => `${pad2(Math.floor(m / 60))}:${pad2(m % 60)}`;
+
+    const slotCount = Math.floor((LAST_START_MINUTES - OPEN_MINUTES) / SLOT_MINUTES) + 1;
+
+    function defaultState(){
+      return {
+        day: new Date().toISOString().slice(0,10),
+        sessions: Array.from({length:slotCount}, (_, i) => ({
+          id:i,
+          startMin: OPEN_MINUTES + i * SLOT_MINUTES,
+          start: fromMinutes(OPEN_MINUTES + i * SLOT_MINUTES),
+          film: FILMS[i % FILMS.length],
+          count: 0
+        })),
+        logs: [],
+        selectedFilm: FILMS[0],
+        viewStart: 0
+      };
+    }
+
+    let state = loadState();
+    let activeSessionId = null;
+    let undoStack = [];
+    let currentMode = "cashier";
+    let lastSignature = "";
+    let demoTimeMin = null;
+
+    function toast(msg){
+      const t = el("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(()=>t.classList.remove("show"), 1600);
+    }
+
+    function setDemoTime(mins){
+      if (mins === null) {
+        demoTimeMin = null;
+        toast("Gerçek saate döndü");
+      } else {
+        demoTimeMin = mins;
+        toast(`Demo saat: ${fromMinutes(mins)}`);
+      }
+      render();
+    }
+
+    function updateDemoStatus(){
+      const status = el("demoStatus");
+      const settings = el("settingsCurrentTime");
+      const timeText = demoTimeMin === null ? "Gerçek saat aktif" : `Demo saat aktif: ${fromMinutes(demoTimeMin)}`;
+      if (status) status.textContent = timeText;
+      if (settings) settings.textContent = demoTimeMin === null ? "Gerçek saat" : fromMinutes(demoTimeMin);
+    }
+
+    function signature(snapshot = state){
+      return JSON.stringify({
+        day: snapshot.day,
+        sessions: snapshot.sessions.map(s => [s.id, s.startMin, s.film, s.count]),
+        logs: snapshot.logs.slice(0,6).map(x => [x.text, x.at]),
+        selectedFilm: snapshot.selectedFilm,
+        viewStart: snapshot.viewStart
+      });
+    }
+
+    function clone(obj){
+      return JSON.parse(JSON.stringify(obj));
+    }
+
+    function pushUndo(){
+      undoStack.push(clone(state));
+      if (undoStack.length > 20) undoStack.shift();
+    }
+
+    function saveState(){
+      const packed = JSON.stringify(state);
+      localStorage.setItem(STORAGE_KEY, packed);
+      localStorage.setItem(BACKUP_KEY, packed);
+
+      const sig = signature(state);
+      if (sig !== lastSignature){
+        let hist = [];
+        try { hist = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]"); } catch { hist = []; }
+        hist.unshift({ at: Date.now(), state: clone(state) });
+        hist = hist.slice(0, 8);
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
+        lastSignature = sig;
+      }
+    }
+
+    function loadState(){
+      const today = new Date().toISOString().slice(0,10);
+      const tryParse = (raw) => {
+        if (!raw) return null;
+        try { return JSON.parse(raw); } catch { return null; }
+      };
+
+      let parsed = tryParse(localStorage.getItem(STORAGE_KEY));
+      if (!parsed || parsed.day !== today) parsed = tryParse(localStorage.getItem(BACKUP_KEY));
+      if ((!parsed || parsed.day !== today)) {
+        const hist = tryParse(localStorage.getItem(HISTORY_KEY));
+        if (Array.isArray(hist) && hist.length && hist[0]?.state?.day === today) parsed = hist[0].state;
+      }
+      if (!parsed || parsed.day !== today) return defaultState();
+
+      const fresh = defaultState();
+      fresh.sessions = fresh.sessions.map((s, i) => {
+        const old = parsed.sessions?.[i];
+        return old ? { ...s, ...old, id:i, startMin:s.startMin, start:s.start } : s;
+      });
+      fresh.logs = Array.isArray(parsed.logs) ? parsed.logs.slice(0, 20) : [];
+      fresh.selectedFilm = parsed.selectedFilm && FILMS.includes(parsed.selectedFilm) ? parsed.selectedFilm : FILMS[0];
+      fresh.viewStart = Number.isInteger(parsed.viewStart) ? parsed.viewStart : 0;
+      lastSignature = signature(fresh);
+      return fresh;
+    }
+
+    function logAction(text){
+      state.logs.unshift({ text, at: nowTime() });
+      state.logs = state.logs.slice(0, 6);
+      saveState();
+      render();
+    }
+
+    function clampViewStart(){
+      state.viewStart = Math.max(0, Math.min(state.viewStart, Math.max(0, state.sessions.length - WINDOW_SIZE)));
+    }
+
+    function autoViewStart(){
+      const mins = currentMinutes();
+      let idx = Math.floor((mins - OPEN_MINUTES) / SLOT_MINUTES);
+      if (mins < OPEN_MINUTES) idx = 0;
+      if (mins > LAST_START_MINUTES) idx = state.sessions.length - WINDOW_SIZE;
+      state.viewStart = Math.max(0, Math.min(idx, state.sessions.length - WINDOW_SIZE));
+      clampViewStart();
+    }
+
+    function getStatus(session){
+      const nowMin = currentMinutes();
+      const startMin = session.startMin;
+      const endMin = startMin + SLOT_MINUTES;
+
+      if (nowMin > endMin) return { label:"Geçti", cls:"closed", locked:true };
+      if (startMin > nowMin + WINDOW_MINUTES) return { label:"Kilitli", cls:"locked", locked:true };
+      if (session.count >= CAPACITY) return { label:"Dolu", cls:"full", locked:false };
+      if (nowMin >= startMin && nowMin < endMin) return { label:"Devam", cls:"running", locked:false };
+      if (startMin >= nowMin && startMin <= nowMin + WINDOW_MINUTES) return { label:"Açık", cls:"open", locked:false };
+      return { label:"Kilitli", cls:"locked", locked:true };
+    }
+
+    function visibleSessions(){
+      clampViewStart();
+      return state.sessions.slice(state.viewStart, state.viewStart + WINDOW_SIZE);
+    }
+
+    function setMode(mode){
+      currentMode = mode;
+      const cashier = mode === "cashier";
+      el("cashierArea").style.display = cashier ? "" : "none";
+      el("customerScreen").style.display = cashier ? "none" : "";
+      el("btnCashierMode").className = cashier ? "chip primary" : "chip ghost";
+      el("btnCustomerMode").className = cashier ? "chip ghost" : "chip primary";
+      renderCustomerView();
+    }
+
+    function renderCustomerView(){
+      const summary = el("customerSummary");
+      const list = el("customerSessions");
+      if (!summary || !list) return;
+
+      const mins = currentMinutes();
+      const visible = state.sessions.filter(s => s.startMin >= mins && s.startMin < mins + WINDOW_MINUTES);
+      const bookable = visible.filter(s => !getStatus(s).locked && s.count < CAPACITY);
+      const totalOpenSeats = visible.reduce((sum, s) => sum + Math.max(0, CAPACITY - s.count), 0);
+
+      summary.innerHTML = `
+        <div class="customer-summary"><div class="v">${visible.length}</div><div class="l">Gösterilen seans</div></div>
+        <div class="customer-summary"><div class="v">${bookable.length}</div><div class="l">Katılınabilir</div></div>
+        <div class="customer-summary"><div class="v">${totalOpenSeats}</div><div class="l">Toplam boş yer</div></div>
+      `;
+
+      list.innerHTML = "";
+      if (!visible.length){
+        list.innerHTML = '<div class="customer-card" style="grid-column:1/-1;"><div class="title">Şu an açık seans yok</div><div class="meta">Lütfen biraz sonra tekrar bakın.</div></div>';
+        return;
+      }
+
+      visible.forEach((s) => {
+        const st = getStatus(s);
+        const remaining = Math.max(0, CAPACITY - s.count);
+        const card = document.createElement("div");
+        card.className = "customer-card";
+        card.innerHTML = `
+          <div class="title">${s.start} · ${s.film || "Film seçilmedi"}</div>
+          <div class="meta">${s.count}/${CAPACITY} kişi dolu</div>
+          <div class="line">
+            <span class="pill ${st.locked ? "red" : "green"}">${st.locked ? st.label : "Katılabilir"}</span>
+            <span class="pill">${remaining} boş yer</span>
+          </div>
+          <div class="line">
+            <span class="pill">Seans süresi 10 dk</span>
+            <span class="pill">Müşteriye gösterilebilir</span>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function addPeople(id, n){
+      const s = state.sessions[id];
+      if (!s) return;
+      const st = getStatus(s);
+      if (st.locked || s.count >= CAPACITY) return;
+      pushUndo();
+      s.count = Math.min(CAPACITY, s.count + n);
+      saveState();
+      toast(`+${n} kişi eklendi`);
+      logAction(`${s.start} seansına +${n} kişi eklendi`);
+    }
+
+    function removePeople(id, n){
+      const s = state.sessions[id];
+      if (!s) return;
+      const st = getStatus(s);
+      if (st.locked) return;
+      pushUndo();
+      s.count = Math.max(0, s.count - n);
+      saveState();
+      toast(`-${n} kişi çıkarıldı`);
+      logAction(`${s.start} seansından -${n} kişi çıkarıldı`);
+    }
+
+    function setFilm(id, film){
+      const s = state.sessions[id];
+      if (!s) return;
+      pushUndo();
+      s.film = film;
+      if (film) state.selectedFilm = film;
+      saveState();
+      toast("Film değişti");
+      logAction(`${s.start} seansı film değişti: ${film || "Boş"}`);
+    }
+
+    function toggleCustomerMode(){
+      setMode(currentMode === "cashier" ? "customer" : "cashier");
+      toast(currentMode === "cashier" ? "Kasiyer ekranı" : "Müşteri ekranı");
+    }
+
+    function undoLastAction(){
+      if (!undoStack.length){
+        toast("Geri alınacak işlem yok");
+        return;
+      }
+      state = undoStack.pop();
+      saveState();
+      toast("Son işlem geri alındı");
+      logAction("Son işlem geri alındı");
+    }
+
+    function restoreLatestBackup(){
+      let hist = [];
+      try { hist = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]"); } catch { hist = []; }
+      if (!Array.isArray(hist) || !hist.length){
+        toast("Geri yüklenecek yedek yok");
+        return;
+      }
+      state = hist[0].state;
+      undoStack = [];
+      saveState();
+      toast("Son yedek geri yüklendi");
+      logAction("Son yedek geri yüklendi");
+      render();
+    }
+
+    function refreshBackup(){
+      saveState();
+      toast("Yedek tazelendi");
+      logAction("Yedek tazelendi");
+    }
+
+    function exportSummary(){
+      const lines = state.sessions.slice(0, 12).map(s => `${s.start} | ${s.film || "Film yok"} | ${s.count}/${CAPACITY}`);
+      const text = `Zeplin X - Gün Özeti\n${lines.join("\n")}`;
+      navigator.clipboard.writeText(text).then(() => {
+        toast("Özet kopyalandı");
+        logAction("Özet panoya kopyalandı");
+      }).catch(() => alert(text));
+    }
+
+    function openFilmModal(id){
+      activeSessionId = id;
+      const s = state.sessions[id];
+      el("modalHint").textContent = `${s.start} seansı için film seç`;
+      const root = el("pickrow");
+      root.innerHTML = "";
+      FILMS.forEach(f => {
+        const b = document.createElement("button");
+        b.className = "pick" + (s.film === f ? " primary" : "");
+        b.textContent = f;
+        b.onclick = () => { setFilm(id, f); closeModal(); render(); };
+        root.appendChild(b);
+      });
+      el("filmModal").classList.add("show");
+      el("filmModal").setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal(){
+      el("filmModal").classList.remove("show");
+      el("filmModal").setAttribute("aria-hidden", "true");
+      activeSessionId = null;
+    }
+
+    function renderFilmGrid(){
+      const grid = el("filmGrid");
+      grid.innerHTML = "";
+      FILMS.forEach(f => {
+        const btn = document.createElement("button");
+        btn.className = "filmopt" + (state.selectedFilm === f ? " active" : "");
+        btn.textContent = f;
+        btn.onclick = () => {
+          state.selectedFilm = f;
+          saveState();
+          const firstOpen = state.sessions.findIndex(s => !getStatus(s).locked && s.count < CAPACITY);
+          if (activeSessionId !== null) setFilm(activeSessionId, f);
+          else if (firstOpen >= 0) setFilm(firstOpen, f);
+          render();
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    function renderHistory(){
+      const root = el("history");
+      root.innerHTML = "";
+      if (!state.logs.length){
+        root.innerHTML = '<div class="small">Henüz işlem yok.</div>';
+        return;
+      }
+      state.logs.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "log";
+        div.innerHTML = `<div><strong>${item.text}</strong><br><span>${item.at}</span></div><span>✓</span>`;
+        root.appendChild(div);
+      });
+    }
+
+    function renderSessions(){
+      const root = el("sessions");
+      root.innerHTML = "";
+      const visible = visibleSessions();
+      visible.forEach((s, idx) => {
+        const globalIndex = state.viewStart + idx;
+        const st = getStatus(s);
+        const pct = Math.min(100, Math.round((s.count / CAPACITY) * 100));
+        const fillClass = s.count >= CAPACITY ? "full" : pct >= 70 ? "warn" : "";
+        const card = document.createElement("div");
+        card.className = `session ${st.cls} ${s.count >= CAPACITY ? "full" : ""} ${st.locked ? "locked" : ""} ${idx === 0 ? "upcoming" : ""}`;
+        card.innerHTML = `
+          <div class="s-top">
+            <div class="stime">${s.start}</div>
+            <div class="badge ${st.cls}">${st.label}</div>
+          </div>
+          <div class="film">${s.film || "Film seçilmedi"}</div>
+          <div class="meta">
+            <div class="bar"><div class="fill ${fillClass}" style="width:${pct}%"></div></div>
+            <div class="seats">${s.count}/${CAPACITY}</div>
+          </div>
+          <div class="btns">
+            <button class="btn add" ${st.locked || s.count >= CAPACITY ? "disabled" : ""}>+1</button>
+            <button class="btn add2" ${st.locked || s.count >= CAPACITY ? "disabled" : ""}>+2</button>
+            <button class="btn add3" ${st.locked || s.count >= CAPACITY ? "disabled" : ""}>+3</button>
+            <button class="btn min" ${st.locked || s.count <= 0 ? "disabled" : ""}>-1</button>
+            <button class="btn film">Film</button>
+            <button class="btn min" disabled style="opacity:.75">Kilit</button>
+          </div>
+          <div class="mini">
+            <span class="small">Saat: ${s.start}</span>
+            <span class="small">Kalan: ${Math.max(0, CAPACITY - s.count)}</span>
+          </div>
+        `;
+        const buttons = card.querySelectorAll("button");
+        buttons[0].onclick = () => addPeople(globalIndex, 1);
+        buttons[1].onclick = () => addPeople(globalIndex, 2);
+        buttons[2].onclick = () => addPeople(globalIndex, 3);
+        buttons[3].onclick = () => removePeople(globalIndex, 1);
+        buttons[4].onclick = () => openFilmModal(globalIndex);
+        root.appendChild(card);
+      });
+    }
+
+    function renderCustomerSection(){
+      renderCustomerView();
+    }
+
+    function render(){
+      el("clock").textContent = nowTime();
+      el("heroTime").textContent = nowTime();
+
+      const openCount = state.sessions.filter(s => {
+        const st = getStatus(s);
+        return (st.cls === "open" || st.cls === "running") && s.count < CAPACITY;
+      }).length;
+      const fullCount = state.sessions.filter(s => s.count >= CAPACITY).length;
+      const totalPeople = state.sessions.reduce((a, s) => a + s.count, 0);
+
+      el("statOpen").textContent = openCount;
+      el("statFull").textContent = fullCount;
+      el("statTotal").textContent = totalPeople;
+
+      renderSessions();
+      renderFilmGrid();
+      renderHistory();
+      renderCustomerSection();
+      saveState();
+    }
+
+    el("btnPrev").addEventListener("click", () => { state.viewStart = Math.max(0, state.viewStart - WINDOW_SIZE); render(); });
+    el("btnNext").addEventListener("click", () => { state.viewStart = Math.min(state.sessions.length - WINDOW_SIZE, state.viewStart + WINDOW_SIZE); render(); });
+    el("btnNow").addEventListener("click", () => { autoViewStart(); render(); });
+    function openSettings(){
+      const root = el("settingsDemoPickrow");
+      root.innerHTML = "";
+      const presets = [
+        ["10:00", 10 * 60],
+        ["12:00", 12 * 60],
+        ["15:00", 15 * 60],
+        ["18:00", 18 * 60],
+        ["21:30", 21 * 60 + 30],
+        ["Gerçek Saat", null]
+      ];
+      presets.forEach(([label, mins]) => {
+        const b = document.createElement("button");
+        b.className = "pick" + (demoTimeMin === mins ? " primary" : "");
+        b.textContent = label;
+        b.onclick = () => {
+          setDemoTime(mins);
+          updateDemoStatus();
+          openSettings();
+        };
+        root.appendChild(b);
+      });
+      updateDemoStatus();
+      el("settingsModal").classList.add("show");
+      el("settingsModal").setAttribute("aria-hidden", "false");
+    }
+
+    el("btnSettings").addEventListener("click", openSettings);
+    el("btnCashierMode").addEventListener("click", () => setMode("cashier"));
+    el("btnCustomerMode").addEventListener("click", () => setMode("customer"));
+    el("btnHelp").addEventListener("click", () => {
+      el("helpModal").classList.add("show");
+      el("helpModal").setAttribute("aria-hidden", "false");
+    });
+    el("btnExport").addEventListener("click", exportSummary);
+    el("closeModal").addEventListener("click", closeModal);
+    el("clearFilm").addEventListener("click", () => {
+      if (activeSessionId === null) return;
+      setFilm(activeSessionId, "");
+      closeModal();
+      render();
+    });
+    el("filmModal").addEventListener("click", (e) => { if (e.target.id === "filmModal") closeModal(); });
+    el("closeHelp").addEventListener("click", () => {
+      el("helpModal").classList.remove("show");
+      el("helpModal").setAttribute("aria-hidden", "true");
+    });
+    el("closeSettings").addEventListener("click", () => {
+      el("settingsModal").classList.remove("show");
+      el("settingsModal").setAttribute("aria-hidden", "true");
+    });
+    el("realTimeBtn").addEventListener("click", () => {
+      setDemoTime(null);
+      updateDemoStatus();
+      el("settingsModal").classList.remove("show");
+      el("settingsModal").setAttribute("aria-hidden", "true");
+    });
+    el("settingsModal").addEventListener("click", (e) => {
+      if (e.target.id === "settingsModal") {
+        el("settingsModal").classList.remove("show");
+        el("settingsModal").setAttribute("aria-hidden", "true");
+      }
+    });
+    el("helpModal").addEventListener("click", (e) => {
+      if (e.target.id === "helpModal") {
+        el("helpModal").classList.remove("show");
+        el("helpModal").setAttribute("aria-hidden", "true");
+      }
+    });
+    el("closeDemo").addEventListener("click", () => {
+      el("demoModal").classList.remove("show");
+      el("demoModal").setAttribute("aria-hidden", "true");
+    });
+    el("clearDemo").addEventListener("click", () => {
+      setDemoTime(null);
+      el("demoModal").classList.remove("show");
+      el("demoModal").setAttribute("aria-hidden", "true");
+    });
+    el("demoModal").addEventListener("click", (e) => {
+      if (e.target.id === "demoModal") {
+        el("demoModal").classList.remove("show");
+        el("demoModal").setAttribute("aria-hidden", "true");
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeModal();
+        el("helpModal").classList.remove("show");
+        el("helpModal").setAttribute("aria-hidden", "true");
+        el("settingsModal").classList.remove("show");
+        el("settingsModal").setAttribute("aria-hidden", "true");
+      }
+    });
+
+    window.addEventListener("beforeunload", saveState);
+
+    autoViewStart();
+    setMode("cashier");
+    updateDemoStatus();
+    render();
+    setInterval(() => {
+      el("clock").textContent = nowTime();
+      el("heroTime").textContent = nowTime();
+    }, 1000);
+    setInterval(() => {
+      autoViewStart();
+      render();
+    }, 15000);
+  </script>
+</body>
+</html>
